@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+annotations:
+    notifications.argoproj.io/subscribe.on-deployed.slack: team-devops-sre
+    notifications.argoproj.io/subscribe.on-sync-failed.slack: team-devops-sre
+    notifications.argoproj.io/subscribe.on-sync-succeeded.slack: team-devops-sre
+metadata:
+  name: sample-app
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io/foreground
+spec:
+  project: default
+  source:
+    path: helm-guestbook
+    repoURL: https://github.com/venkatmarella/argocd-example-apps.git
+    targetRevision: HEAD
+  destination:
+    name: benchprep-integration-dallas-3293eac1abc0425d95f6f141eeea2b5b
+    namespace: default
+  syncPolicy:
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=false
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
